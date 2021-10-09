@@ -28,9 +28,6 @@ class MyHomePage extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = useMemoized(() => CounterNotifier());
-    useEffect(() => () => notifier.dispose(), []);
-    final state = useStateNotifier(notifier);
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -52,8 +49,7 @@ class ReadMeExample extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notifier = useMemoized(() => CounterNotifier());
-    useEffect(() => () => notifier.dispose(), []);
+    final notifier = useCreateStateNotifier(() => CounterNotifier());
     final state = useStateNotifier(notifier);
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +63,7 @@ class ReadMeExample extends HookWidget {
           style: const TextStyle(fontSize: 30),
         ),
         InkResponse(
-          onTap: notifier.increment,
+          onTap: notifier.decrement,
           child: const Icon(Icons.remove),
         ),
       ],

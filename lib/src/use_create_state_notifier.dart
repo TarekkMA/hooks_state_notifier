@@ -2,15 +2,16 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:state_notifier/state_notifier.dart';
 
-typedef CreateStateNotifier<T> = StateNotifier<T> Function();
+typedef CreateStateNotifier<T extends StateNotifier> = T Function();
 
 /// Creates a memoized [StateNotifier] instance via [create], dispose it when
 /// the widget disposes.
-StateNotifier<T> useCreateStateNotifier<T>(CreateStateNotifier<T> create) {
+T useCreateStateNotifier<T extends StateNotifier>(
+    CreateStateNotifier<T> create) {
   return use(_CreateStateNotifierHook(create));
 }
 
-class _CreateStateNotifierHook<T> extends Hook<StateNotifier<T>> {
+class _CreateStateNotifierHook<T extends StateNotifier> extends Hook<T> {
   final CreateStateNotifier<T> create;
 
   const _CreateStateNotifierHook(this.create);
@@ -20,12 +21,12 @@ class _CreateStateNotifierHook<T> extends Hook<StateNotifier<T>> {
       _CreateStateNotifierHookState();
 }
 
-class _CreateStateNotifierHookState<T>
-    extends HookState<StateNotifier<T>, _CreateStateNotifierHook<T>> {
-  late final StateNotifier<T> notifier = hook.create();
+class _CreateStateNotifierHookState<T extends StateNotifier>
+    extends HookState<T, _CreateStateNotifierHook<T>> {
+  late final T notifier = hook.create();
 
   @override
-  StateNotifier<T> build(BuildContext context) => notifier;
+  T build(BuildContext context) => notifier;
 
   @override
   void dispose() {

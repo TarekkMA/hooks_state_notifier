@@ -55,7 +55,7 @@ void main() {
     Future<void> pump() {
       return tester.pumpWidget(HookBuilder(
         builder: (context) {
-          lastBuiltNotifier = useCreateStateNotifier(create) as _TestNotifier;
+          lastBuiltNotifier = useCreateStateNotifier(create);
           return Container();
         },
       ));
