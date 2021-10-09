@@ -36,7 +36,7 @@ void main() {
           .toStringDeep(),
       equalsIgnoringHashCodes(
         'HookBuilder\n'
-        ' │ useCreateStateNotifier<int>: _TestNotifier(22)\n'
+        ' │ useCreateStateNotifier<_TestNotifier>: _TestNotifier(22)\n'
         ' └SizedBox(renderObject: RenderConstrainedBox#00000)\n',
       ),
     );
