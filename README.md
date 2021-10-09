@@ -4,7 +4,8 @@
 [![codecov](https://codecov.io/gh/TarekkMA/hooks_state_notifier/branch/master/graph/badge.svg?token=7EP6J440H0)](https://codecov.io/gh/TarekkMA/hooks_state_notifier)
 
 
-This package provides a `useStateNotifier` hook similar to `useValueListenable`.
+This package provides a `useStateNotifier` hook similar to `useValueListenable`. There is also 
+`useCreateStateNotifier` hook which creates a `StateNotifier` and automatically dispose it.
 
 ## Usage
 
@@ -23,11 +24,9 @@ class ReadMeExample extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 3. Create your notifier
-    final notifier = useMemoized(() => CounterNotifier());
-    // 4. Don't forget to dispose it
-    useEffect(() => () => notifier.dispose(), []);
-    // 5. Listen to your state
+    // 3. Create your notifier (useCreateStateNotifier will dispose it)
+    final notifier = useCreateStateNotifier(() => CounterNotifier());
+    // 4. Listen to your state
     final state = useStateNotifier(notifier);
     
     //......

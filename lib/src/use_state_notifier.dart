@@ -62,7 +62,7 @@ class _ListenableStateHook<T> extends HookState<T, _StateNotifierHook<T>> {
   }
 
   @override
-  String get debugLabel => 'useStateNotifier';
+  String get debugLabel => 'useStateNotifier<$T>';
 
   @override
   Object? get debugValue => hook.stateNotifier;

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hooks_state_notifier/hooks_state_notifier.dart';
+import 'package:hooks_state_notifier/src/use_create_state_notifier.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class _TestNotifier extends StateNotifier<int> {
@@ -23,7 +23,7 @@ void main() {
   testWidgets('debugFillProperties', (tester) async {
     await tester.pumpWidget(
       HookBuilder(builder: (context) {
-        useStateNotifier(_TestNotifier(22));
+        useCreateStateNotifier(() => _TestNotifier(22));
         return const SizedBox();
       }),
     );
@@ -36,60 +36,55 @@ void main() {
           .toStringDeep(),
       equalsIgnoringHashCodes(
         'HookBuilder\n'
-        ' │ useStateNotifier<int>: _TestNotifier(22)\n'
+        ' │ useCreateStateNotifier<int>: _TestNotifier(22)\n'
         ' └SizedBox(renderObject: RenderConstrainedBox#00000)\n',
       ),
     );
   });
 
-  testWidgets('useStateNotifer', (tester) async {
-    var notifier = _TestNotifier();
-    int? lastState;
+  testWidgets('useCreateStateNotifier', (tester) async {
+    _TestNotifier notifierToSupply = _TestNotifier(11);
+    int callCounter = 0;
+    _TestNotifier create() {
+      callCounter++;
+      return notifierToSupply;
+    }
+
+    _TestNotifier? lastBuiltNotifier;
 
     Future<void> pump() {
       return tester.pumpWidget(HookBuilder(
         builder: (context) {
-          lastState = useStateNotifier(notifier);
-          return Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text(lastState.toString()),
-          );
+          lastBuiltNotifier = useCreateStateNotifier(create) as _TestNotifier;
+          return Container();
         },
       ));
     }
 
     await pump();
+    expect(lastBuiltNotifier!.mounted, true);
 
-    expect(lastState, 0);
-    expect(find.text('0'), findsOneWidget);
+    expect(lastBuiltNotifier, notifierToSupply);
+    expect(callCounter, 1);
 
-    final element = tester.firstElement(find.byType(HookBuilder));
-
-    expect(notifier.hasListeners, true);
-    expect(element.dirty, false);
-    notifier.increment();
-    expect(element.dirty, true);
-    await tester.pump();
-    expect(element.dirty, false);
-
-    final previousNotifier = notifier;
-    notifier = _TestNotifier();
-
+    notifierToSupply = _TestNotifier(11);
+    await pump();
+    lastBuiltNotifier!.increment();
+    await pump();
+    lastBuiltNotifier!.increment();
+    lastBuiltNotifier!.increment();
+    lastBuiltNotifier!.increment();
+    lastBuiltNotifier!.decrement();
     await pump();
 
-    expect(previousNotifier.hasListeners, false);
-    expect(notifier.hasListeners, true);
-    expect(element.dirty, false);
-    notifier.increment();
-    expect(element.dirty, true);
-    await tester.pump();
-    expect(element.dirty, false);
+    expect(lastBuiltNotifier, isNot(notifierToSupply));
+    expect(callCounter, 1);
 
     await tester.pumpWidget(const SizedBox());
 
-    expect(notifier.hasListeners, false);
+    expect(lastBuiltNotifier, isNot(notifierToSupply));
+    expect(callCounter, 1);
 
-    notifier.dispose();
-    previousNotifier.dispose();
+    expect(lastBuiltNotifier!.mounted, false);
   });
 }
