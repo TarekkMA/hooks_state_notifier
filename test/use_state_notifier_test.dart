@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -6,14 +7,41 @@ import 'package:hooks_state_notifier/hooks_state_notifier.dart';
 import 'package:state_notifier/state_notifier.dart';
 
 class _TestNotifier extends StateNotifier<int> {
-  _TestNotifier() : super(0);
+  _TestNotifier([int? state]) : super(state ?? 0);
 
   void increment() => state++;
   void decrement() => state--;
   void change(int newState) => state = newState;
+
+  @override
+  String toString() {
+    return '_TestNotifier($state)';
+  }
 }
 
 void main() {
+  testWidgets('debugFillProperties', (tester) async {
+    await tester.pumpWidget(
+      HookBuilder(builder: (context) {
+        useStateNotifer(_TestNotifier(22));
+        return const SizedBox();
+      }),
+    );
+
+    final element = tester.element(find.byType(HookBuilder));
+
+    expect(
+      element
+          .toDiagnosticsNode(style: DiagnosticsTreeStyle.offstage)
+          .toStringDeep(),
+      equalsIgnoringHashCodes(
+        'HookBuilder\n'
+        ' │ useStateNotifer: _TestNotifier(22)\n'
+        ' └SizedBox(renderObject: RenderConstrainedBox#00000)\n',
+      ),
+    );
+  });
+
   testWidgets('useStateNotifer', (tester) async {
     var notifer = _TestNotifier();
     int? lastState;
