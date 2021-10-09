@@ -72,12 +72,12 @@ void main() {
     await tester.pump();
     expect(element.dirty, false);
 
-    final previousNotifer = notifier;
+    final previousNotifier = notifier;
     notifier = _TestNotifier();
 
     await pump();
 
-    expect(previousNotifer.hasListeners, false);
+    expect(previousNotifier.hasListeners, false);
     expect(notifier.hasListeners, true);
     expect(element.dirty, false);
     notifier.increment();
@@ -90,6 +90,6 @@ void main() {
     expect(notifier.hasListeners, false);
 
     notifier.dispose();
-    previousNotifer.dispose();
+    previousNotifier.dispose();
   });
 }
