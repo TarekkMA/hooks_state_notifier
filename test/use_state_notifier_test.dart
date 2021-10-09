@@ -23,7 +23,7 @@ void main() {
   testWidgets('debugFillProperties', (tester) async {
     await tester.pumpWidget(
       HookBuilder(builder: (context) {
-        useStateNotifer(_TestNotifier(22));
+        useStateNotifier(_TestNotifier(22));
         return const SizedBox();
       }),
     );
@@ -43,13 +43,13 @@ void main() {
   });
 
   testWidgets('useStateNotifer', (tester) async {
-    var notifer = _TestNotifier();
+    var notifier = _TestNotifier();
     int? lastState;
 
     Future<void> pump() {
       return tester.pumpWidget(HookBuilder(
         builder: (context) {
-          lastState = useStateNotifer(notifer);
+          lastState = useStateNotifier(notifier);
           return Directionality(
             textDirection: TextDirection.ltr,
             child: Text(lastState.toString()),
@@ -65,31 +65,31 @@ void main() {
 
     final element = tester.firstElement(find.byType(HookBuilder));
 
-    expect(notifer.hasListeners, true);
+    expect(notifier.hasListeners, true);
     expect(element.dirty, false);
-    notifer.increment();
+    notifier.increment();
     expect(element.dirty, true);
     await tester.pump();
     expect(element.dirty, false);
 
-    final previousNotifer = notifer;
-    notifer = _TestNotifier();
+    final previousNotifer = notifier;
+    notifier = _TestNotifier();
 
     await pump();
 
     expect(previousNotifer.hasListeners, false);
-    expect(notifer.hasListeners, true);
+    expect(notifier.hasListeners, true);
     expect(element.dirty, false);
-    notifer.increment();
+    notifier.increment();
     expect(element.dirty, true);
     await tester.pump();
     expect(element.dirty, false);
 
     await tester.pumpWidget(const SizedBox());
 
-    expect(notifer.hasListeners, false);
+    expect(notifier.hasListeners, false);
 
-    notifer.dispose();
+    notifier.dispose();
     previousNotifer.dispose();
   });
 }

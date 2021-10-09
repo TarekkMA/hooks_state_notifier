@@ -4,12 +4,12 @@ import 'package:state_notifier/state_notifier.dart';
 
 /// Subscribes to a [StateNotifier] and mark the widget as needing build
 /// whenever the state is changed.
-T useStateNotifer<T>(StateNotifier<T> stateNotifer) {
-  return use(_StateNotiferHook<T>(stateNotifer));
+T useStateNotifier<T>(StateNotifier<T> stateNotifier) {
+  return use(_StateNotifierHook<T>(stateNotifier));
 }
 
-class _StateNotiferHook<T> extends Hook<T> {
-  const _StateNotiferHook(this.stateNotifier);
+class _StateNotifierHook<T> extends Hook<T> {
+  const _StateNotifierHook(this.stateNotifier);
 
   final StateNotifier<T> stateNotifier;
 
@@ -17,7 +17,7 @@ class _StateNotiferHook<T> extends Hook<T> {
   _ListenableStateHook<T> createState() => _ListenableStateHook<T>();
 }
 
-class _ListenableStateHook<T> extends HookState<T, _StateNotiferHook<T>> {
+class _ListenableStateHook<T> extends HookState<T, _StateNotifierHook<T>> {
   RemoveListener? _removeListenerCallback;
   late T _currentState;
 
@@ -28,10 +28,10 @@ class _ListenableStateHook<T> extends HookState<T, _StateNotiferHook<T>> {
   }
 
   @override
-  void didUpdateHook(_StateNotiferHook<T> oldHook) {
+  void didUpdateHook(_StateNotifierHook<T> oldHook) {
     super.didUpdateHook(oldHook);
     if (hook.stateNotifier != oldHook.stateNotifier) {
-      _removeListner();
+      _removeListener();
       _addListener();
     }
   }
@@ -48,21 +48,21 @@ class _ListenableStateHook<T> extends HookState<T, _StateNotiferHook<T>> {
   void _addListener() {
     _removeListenerCallback = hook.stateNotifier.addListener(
       _listener,
-      fireImmediately: true, // ensures that [_currentState] will be initlized
+      fireImmediately: true, // ensures that [_currentState] will be initialized
     );
   }
 
-  void _removeListner() {
+  void _removeListener() {
     _removeListenerCallback?.call();
   }
 
   @override
   void dispose() {
-    _removeListner();
+    _removeListener();
   }
 
   @override
-  String get debugLabel => 'useStateNotifer';
+  String get debugLabel => 'useStateNotifier';
 
   @override
   Object? get debugValue => hook.stateNotifier;
