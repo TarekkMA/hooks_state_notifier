@@ -1,0 +1,1 @@
+library hooks_state_notifier;
