@@ -1,7 +1,7 @@
 name: hooks_state_notifier
-description: A new Flutter package project.
+description: Flutter hooks for StateNotifier.
 version: 1.0.0
-homepage:
+repository: https://github.com/TarekkMA/hooks_state_notifier
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
